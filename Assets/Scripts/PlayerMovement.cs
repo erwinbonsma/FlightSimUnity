@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,6 +15,15 @@ public class PlayerMovement : MonoBehaviour {
 
     public float speed;
 
+    public event Action<PlayerMovement> onDirectionChange;
+
+    public float SideTurnAmount {
+        get { return targetSideTurn / (float)numSideTurnSteps; }
+    }
+    public float UpTurnAmount {
+        get { return targetUpTurn / (float)numUpTurnSteps; }
+    }
+
     // Ranges from [-numSideTurnSteps, numSideTurnSteps]
     int targetSideTurn;
     float sideTurn;
@@ -26,6 +36,12 @@ public class PlayerMovement : MonoBehaviour {
     int targetTwistTurn;
     float twistTurn;
 
+    void FireDirectionChange() {
+        if (onDirectionChange != null) {
+            onDirectionChange(this);
+        }
+    }
+
     void ProcessInput() {
         bool shiftPressed = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
@@ -37,6 +53,7 @@ public class PlayerMovement : MonoBehaviour {
             } else {
                 if (targetSideTurn > -numSideTurnSteps) {
                     targetSideTurn--;
+                    FireDirectionChange();
                 }
             }
         }
@@ -48,17 +65,20 @@ public class PlayerMovement : MonoBehaviour {
             } else {
                 if (targetSideTurn < numSideTurnSteps) {
                     targetSideTurn++;
+                    FireDirectionChange();
                 }
             }
         }
         if (Input.GetKeyDown(KeyCode.W)) {
             if (targetUpTurn < numUpTurnSteps) {
                 targetUpTurn++;
+                FireDirectionChange();
             }
         }
         if (Input.GetKeyDown(KeyCode.S)) {
             if (targetUpTurn >= 0) {
                 targetUpTurn--;
+                FireDirectionChange();
             }
         }
     }
