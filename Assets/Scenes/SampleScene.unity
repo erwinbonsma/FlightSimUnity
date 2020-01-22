@@ -277,6 +277,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 581690884}
+  isPositionFixed: 0
 --- !u!1 &581690884
 GameObject:
   m_ObjectHideFlags: 0
@@ -307,7 +308,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   numSideTurnSteps: 4
-  maxSideTurnAngle: 10
+  numUpTurnSteps: 4
+  maxSideTurnAngle: 1
+  maxUpTurnAngle: 1
+  maxTwistTurnAngle: 0.2
   speed: 4
 --- !u!4 &581690886
 Transform:
@@ -540,8 +544,8 @@ MonoBehaviour:
   player: {fileID: 581690884}
   puffPrefab: {fileID: 4050380534131806856, guid: 98168f733dd3c4b488d64ceea2de05a5,
     type: 3}
-  maxPuffs: 100
-  spawnPeriod: 0.5
+  maxPuffs: 200
+  spawnPeriod: 0.2
 --- !u!4 &2127632762
 Transform:
   m_ObjectHideFlags: 0
