@@ -413,9 +413,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   numSideTurnSteps: 4
   numUpTurnSteps: 4
+  numRollTurnSteps: 4
   maxSideTurnAngle: 1
   maxUpTurnAngle: 1
-  maxTwistTurnAngle: 0.4
+  maxRollTurnAngle: 1
   turnSpeed: 0.4
   speed: 4
 --- !u!4 &581690886

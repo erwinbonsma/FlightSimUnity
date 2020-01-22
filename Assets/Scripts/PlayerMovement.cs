@@ -6,22 +6,27 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour {
     public int numSideTurnSteps;
     public int numUpTurnSteps;
+    public int numRollTurnSteps;
 
     public float maxSideTurnAngle;
     public float maxUpTurnAngle;
-    public float maxTwistTurnAngle;
+    public float maxRollTurnAngle;
 
     public float turnSpeed = 0.4f;
 
     public float speed;
 
     public event Action<PlayerMovement> onDirectionChange;
+    public event Action<PlayerMovement> onRollChange;
 
     public float SideTurnAmount {
         get { return targetSideTurn / (float)numSideTurnSteps; }
     }
     public float UpTurnAmount {
         get { return targetUpTurn / (float)numUpTurnSteps; }
+    }
+    public float RollTurnAmount {
+        get { return targetRollTurn / (float)numRollTurnSteps; }
     }
 
     // Ranges from [-numSideTurnSteps, numSideTurnSteps]
@@ -33,8 +38,8 @@ public class PlayerMovement : MonoBehaviour {
     float upTurn;
 
     // Ranges from [-1, 1]
-    int targetTwistTurn;
-    float twistTurn;
+    int targetRollTurn;
+    float RollTurn;
 
     void FireDirectionChange() {
         if (onDirectionChange != null) {
@@ -42,40 +47,44 @@ public class PlayerMovement : MonoBehaviour {
         }
     }
 
-    void ProcessInput() {
-        bool shiftPressed = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+    void FireRollChange() {
+        if (onRollChange != null) {
+            onRollChange(this);
+        }
+    }
 
+    void ProcessInput() {
+        if (Input.GetKeyDown(KeyCode.Q)) {
+            if (targetRollTurn > -numRollTurnSteps) {
+                targetRollTurn--;
+                FireRollChange();
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.E)) {
+            if (targetRollTurn < numRollTurnSteps) {
+                targetRollTurn++;
+                FireRollChange();
+            }
+        }
         if (Input.GetKeyDown(KeyCode.A)) {
-            if (shiftPressed) {
-                if (targetTwistTurn >= 0) {
-                    targetTwistTurn--;
-                }
-            } else {
-                if (targetSideTurn > -numSideTurnSteps) {
-                    targetSideTurn--;
-                    FireDirectionChange();
-                }
+            if (targetSideTurn > -numSideTurnSteps) {
+                targetSideTurn--;
+                FireDirectionChange();
             }
         }
         if (Input.GetKeyDown(KeyCode.D)) {
-            if (shiftPressed) {
-                if (targetTwistTurn <= 0) {
-                    targetTwistTurn++;
-                }
-            } else {
-                if (targetSideTurn < numSideTurnSteps) {
-                    targetSideTurn++;
-                    FireDirectionChange();
-                }
+            if (targetSideTurn < numSideTurnSteps) {
+                targetSideTurn++;
+                FireDirectionChange();
             }
         }
-        if (Input.GetKeyDown(KeyCode.W)) {
+        if (Input.GetKeyDown(KeyCode.S)) {
             if (targetUpTurn < numUpTurnSteps) {
                 targetUpTurn++;
                 FireDirectionChange();
             }
         }
-        if (Input.GetKeyDown(KeyCode.S)) {
+        if (Input.GetKeyDown(KeyCode.W)) {
             if (targetUpTurn >= 0) {
                 targetUpTurn--;
                 FireDirectionChange();
@@ -88,7 +97,7 @@ public class PlayerMovement : MonoBehaviour {
 
         sideTurn = Mathf.Lerp(sideTurn, targetSideTurn, turnSpeed);
         upTurn = Mathf.Lerp(upTurn, targetUpTurn, turnSpeed);
-        twistTurn = Mathf.Lerp(twistTurn, targetTwistTurn, turnSpeed);
+        RollTurn = Mathf.Lerp(RollTurn, targetRollTurn, turnSpeed);
 
         turnAngle = sideTurn * maxSideTurnAngle / numSideTurnSteps;
         transform.RotateAround(transform.position, transform.up, turnAngle);
@@ -96,7 +105,7 @@ public class PlayerMovement : MonoBehaviour {
         turnAngle = upTurn * maxUpTurnAngle / numUpTurnSteps;
         transform.RotateAround(transform.position, transform.right, -turnAngle);
 
-        turnAngle = twistTurn * maxTwistTurnAngle;
+        turnAngle = RollTurn * maxRollTurnAngle / numRollTurnSteps;
         transform.RotateAround(transform.position, transform.forward, -turnAngle);
     }
 
