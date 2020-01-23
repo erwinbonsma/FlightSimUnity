@@ -6,9 +6,11 @@ using UnityEngine.SceneManagement;
 public class UIManager : MonoBehaviour {
 
     public void StartGame() {
-        Debug.Log("Starting Game");
-
         StartCoroutine(AsyncLoadScene("SampleScene"));
+    }
+
+    public void ShowHelp() {
+        StartCoroutine(AsyncLoadScene("HelpScreen"));
     }
 
     IEnumerator AsyncLoadScene(string sceneName) {
