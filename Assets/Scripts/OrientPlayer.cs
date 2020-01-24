@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OrientRollTracker : MonoBehaviour {
+public class OrientPlayer : MonoBehaviour {
 
-    float maxAngle = 20.0f;
+    public float maxAngle = 20;
 
     PlayerMovement playerMovement;
 
@@ -12,13 +12,13 @@ public class OrientRollTracker : MonoBehaviour {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
 
         playerMovement = player.GetComponent<PlayerMovement>();
-        playerMovement.onRollChange += onRollChange;
+        playerMovement.onDirectionChange += onDirectionChange;
     }
 
-    void onRollChange(PlayerMovement playerMovement) {
-        float angle = maxAngle * -playerMovement.TargetRollTurnAmount;
+    void onDirectionChange(PlayerMovement playerMovement) {
+        float angle = maxAngle * -playerMovement.SideTurnAmount;
 
+        Debug.Log("angle = " + angle);
         transform.localEulerAngles = new Vector3(0, 0, angle);
     }
-
 }
