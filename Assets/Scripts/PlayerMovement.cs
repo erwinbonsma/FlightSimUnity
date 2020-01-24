@@ -14,7 +14,8 @@ public class PlayerMovement : MonoBehaviour {
 
     public float turnSpeed = 0.1f;
 
-    public float updateEps = 0.05f;
+    const float eps = 0.0001f;
+    const float eps2 = 0.01f;
 
     public float speed;
 
@@ -111,22 +112,30 @@ public class PlayerMovement : MonoBehaviour {
         }
     }
 
+    bool UpdateIfNeeded(ref float value, float targetValue) {
+        float delta = Math.Abs(targetValue - value);
+
+        if (delta < eps) {
+            // No update needed
+            return false;
+        }
+
+        if (delta > eps2) {
+            value = Mathf.Lerp(value, targetValue, turnSpeed);
+        } else {
+            value = targetValue;
+        }
+
+        return true;
+    }
+
     void UpdateRotation() {
         float turnAngle;
         bool directionChanged = false;
 
-        if (Math.Abs(targetSideTurn - sideTurn) > updateEps) {
-            sideTurn = Mathf.Lerp(sideTurn, targetSideTurn, turnSpeed);
-            directionChanged = true;
-        }
-        if (Math.Abs(targetUpTurn - upTurn) > updateEps) {
-            upTurn = Mathf.Lerp(upTurn, targetUpTurn, turnSpeed);
-            directionChanged = true;
-        }
-        if (Math.Abs(targetRollTurn - rollTurn) > updateEps) {
-            rollTurn = Mathf.Lerp(rollTurn, targetRollTurn, turnSpeed);
-            directionChanged = true;
-        }
+        directionChanged |= UpdateIfNeeded(ref sideTurn, targetSideTurn);
+        directionChanged |= UpdateIfNeeded(ref upTurn, targetUpTurn);
+        directionChanged |= UpdateIfNeeded(ref rollTurn, targetRollTurn);
 
         if (directionChanged) {
             FireDirectionChange();
