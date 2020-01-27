@@ -9,6 +9,8 @@ public class TrailManager : MonoBehaviour {
     public int maxPuffs = 100;
     public float spawnPeriod = 0.5f;
 
+    public event Action<GameObject> onPuffAdded;
+
     Vector3 _minBound;
     Vector3 _maxBound;
 
@@ -59,6 +61,9 @@ public class TrailManager : MonoBehaviour {
             GameObject newPuffObject = Instantiate(puffPrefab, player.transform.position, Quaternion.identity);
             puffs[lastPuff] = newPuffObject;
             UpdateBounds(newPuffObject.transform.position);
+            if (onPuffAdded != null) {
+                onPuffAdded(newPuffObject);
+            }
         }
     }
 
