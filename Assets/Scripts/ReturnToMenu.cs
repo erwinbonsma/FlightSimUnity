@@ -7,6 +7,6 @@ public class ReturnToMenu : MonoBehaviour {
     void Update() {
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Return)) {
             SceneManager.LoadSceneAsync("MainMenu");
-        }        
+        }
     }
 }

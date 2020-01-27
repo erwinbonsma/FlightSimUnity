@@ -18,7 +18,6 @@ public class OrientPlayer : MonoBehaviour {
     void onDirectionChange(PlayerMovement playerMovement) {
         float angle = maxAngle * -playerMovement.SideTurnAmount;
 
-        Debug.Log("angle = " + angle);
         transform.localEulerAngles = new Vector3(0, 0, angle);
     }
 }
