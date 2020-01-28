@@ -19,6 +19,7 @@ public class TrailManager : MonoBehaviour {
     int lastPuff = 0;
     float timeSinceLastPuff = 0;
 
+    // Number of puffs currently alive
     public int NumPuffs {
         get;
         private set;
@@ -35,6 +36,8 @@ public class TrailManager : MonoBehaviour {
 
         puffs = new GameObject[maxPuffs];
         NumPuffs = 0;
+        firstPuff = 0;
+        lastPuff = maxPuffs - 1;
 
         Enabled = true;
 
@@ -51,7 +54,7 @@ public class TrailManager : MonoBehaviour {
             int prevPuff = lastPuff;
             lastPuff = (lastPuff + 1) % maxPuffs;
 
-            if (lastPuff == firstPuff) {
+            if (NumPuffs == maxPuffs) {
                 Destroy(puffs[firstPuff]);
                 firstPuff = (firstPuff + 1) % maxPuffs;
             } else {
@@ -75,5 +78,28 @@ public class TrailManager : MonoBehaviour {
         _maxBound.x = Math.Max(_maxBound.x, pos.x);
         _maxBound.y = Math.Max(_maxBound.y, pos.y);
         _maxBound.z = Math.Max(_maxBound.z, pos.z);
+    }
+
+    int IndexOfPuff(int puffP) {
+        int index = NumPuffs - (lastPuff - puffP);
+        return (puffP <= lastPuff) ? index : index - maxPuffs;
+    }
+
+    public IEnumerator<Puff> GetEnumerator() {
+        if (NumPuffs == 0) {
+            yield break;
+        }
+
+        int puffP = firstPuff;
+        while (true) {
+            yield return new Puff(puffs[puffP].transform.position, IndexOfPuff(puffP));
+            if (puffP == lastPuff) {
+                yield break;
+            }
+
+            if (++puffP == maxPuffs) {
+                puffP = 0;
+            }
+        }
     }
 }
