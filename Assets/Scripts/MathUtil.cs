@@ -8,13 +8,14 @@ enum Orientation {
 
 public enum IntersectionResult {
     NotTouching,
-    Intersecting,
+    IntersectingFromRight,
+    IntersectingFromLeft,
     Overlapping
 }
 
 public class MathUtil {
 
-    const float eps = 0.00001f;
+    const float eps = 0.1f;
 
     // Given three co-linear points, returns "true" if point q lies on line segment p-r
     static private bool OnSegment(Vector2 p, Vector2 q, Vector2 r) {
@@ -45,7 +46,12 @@ public class MathUtil {
 
         // General case
         if (o1 != o2 && o3 != o4) {
-            return IntersectionResult.Intersecting;
+            // Account for one of the orientations being co-lineair
+            if (o1 == Orientation.Clockwise || o2 == Orientation.CounterClockwise) {
+                return IntersectionResult.IntersectingFromRight;
+            } else {
+                return IntersectionResult.IntersectingFromLeft;
+            }
         }
 
         // Special Cases
