@@ -29,6 +29,8 @@ public class MissionReport : MonoBehaviour {
 
         StartCoroutine(DrawTrail(trailManager));
 
+        IdentifyCrossings(trailManager);
+
         //SceneManager.LoadSceneAsync("MainMenu");
     }
 
@@ -55,4 +57,41 @@ public class MissionReport : MonoBehaviour {
         }
     }
 
+    void IdentifyCrossings(TrailManager trailManager) {
+        float dist = trailManager.MinPuffDistance * 1.5f;
+
+        Puff p0 = null;
+        Vector2 pos_p0 = Vector2.zero; // To silence compiler warning
+        foreach (Puff p1 in trailManager) {
+            Vector2 pos_p1 = new Vector2(p1.Position.x, p1.Position.z);
+            if (p0 != null) {
+                Vector3 midP = (p1.Position + p0.Position) / 2;
+
+                int q0_index = -1;
+                Vector2 pos_q0 = Vector2.zero; // To silence compiler warning
+
+                var nearbyEnum = trailManager.GetNearbyPuffs(midP, dist, p1.Index + 1);
+                while (nearbyEnum.MoveNext()) {
+                    Puff q1 = nearbyEnum.Current;
+                    Vector2 pos_q1 = new Vector2(q1.Position.x, q1.Position.z);
+                    if (q0_index + 1 == q1.Index) {
+                        IntersectionResult result = MathUtil.DoLineSegmentsIntersect(
+                            pos_p0, pos_p1, pos_q0, pos_q1
+                        );
+                        if (result != IntersectionResult.NotTouching) {
+                            if (result == IntersectionResult.Intersecting) {
+                                Debug.Log("Intersection between " + (p1.Index - 1) + " and " + q0_index);
+                            } else {
+                                Debug.Log("Overlap between " + (p1.Index - 1) + " and " + q0_index);
+                            }
+                        }
+                    }
+                    q0_index = q1.Index;
+                    pos_q0 = pos_q1;
+                }
+            }
+            p0 = p1;
+            pos_p0 = pos_p1;
+        }
+    }
 }

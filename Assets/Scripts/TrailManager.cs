@@ -19,11 +19,16 @@ public class TrailManager : MonoBehaviour {
     int lastPuff = 0;
     float timeSinceLastPuff = 0;
 
+    Vector3 prevPos;
+    float minPuffDist = float.MaxValue;
+
     // Number of puffs currently alive
     public int NumPuffs {
         get;
         private set;
     }
+
+    public float MinPuffDistance { get { return minPuffDist; } }
 
     public bool Enabled { get; set; }
 
@@ -51,9 +56,7 @@ public class TrailManager : MonoBehaviour {
         if (Enabled && timeSinceLastPuff > spawnPeriod) {
             timeSinceLastPuff = 0;
 
-            int prevPuff = lastPuff;
-            lastPuff = (lastPuff + 1) % maxPuffs;
-
+            // Clear oldest entry in cyclic array when it's full
             if (NumPuffs == maxPuffs) {
                 Destroy(puffs[firstPuff]);
                 firstPuff = (firstPuff + 1) % maxPuffs;
@@ -61,9 +64,12 @@ public class TrailManager : MonoBehaviour {
                 NumPuffs++;
             }
 
+            // Create new entry
             GameObject newPuffObject = Instantiate(puffPrefab, player.transform.position, Quaternion.identity);
+            lastPuff = (lastPuff + 1) % maxPuffs;
             puffs[lastPuff] = newPuffObject;
             UpdateBounds(newPuffObject.transform.position);
+            UpdateMinDist(newPuffObject.transform.position);
             if (onPuffAdded != null) {
                 onPuffAdded(newPuffObject);
             }
@@ -80,9 +86,31 @@ public class TrailManager : MonoBehaviour {
         _maxBound.z = Math.Max(_maxBound.z, pos.z);
     }
 
+    // Tracks the minimum distance between subsequent puffs. This is used by GetNearbyPuffs to
+    // speed up iteration.
+    void UpdateMinDist(Vector3 pos) {
+        if (NumPuffs > 1) {
+            minPuffDist = Mathf.Min(minPuffDist, Vector3.Distance(pos, prevPos));
+        }
+        prevPos = pos;
+    }
+
+    // Returns the index for the puff at the pointed position in the array.
+    // The index is 0 for the first puff and NumPuffs - 1 for the last one.
     int IndexOfPuff(int puffP) {
+        if (NumPuffs < maxPuffs) {
+            return puffP;
+        }
         int index = NumPuffs - (lastPuff - puffP);
         return (puffP <= lastPuff) ? index : index - maxPuffs;
+    }
+
+    int PointerForPuff(int puffIndex) {
+        if (NumPuffs < maxPuffs) {
+            return puffIndex;
+        } else {
+            return (lastPuff + puffIndex) % maxPuffs;
+        }
     }
 
     public IEnumerator<Puff> GetEnumerator() {
@@ -99,6 +127,40 @@ public class TrailManager : MonoBehaviour {
 
             if (++puffP == maxPuffs) {
                 puffP = 0;
+            }
+        }
+    }
+
+    public IEnumerator<Puff> GetNearbyPuffs(Vector3 pos, float maxDist, int fromIndex) {
+        if (fromIndex >= NumPuffs) {
+            yield break;
+        }
+
+        // Pointer, but does not wrap (so facilitate end of loop detection)
+        int puffP = PointerForPuff(fromIndex);
+        Debug.Assert(IndexOfPuff(puffP) == fromIndex, "Mismatch");
+
+        // Maximum pointer. Never smaller than initial pointer
+        int maxPuffP = PointerForPuff(lastPuff);
+        if (maxPuffP < puffP) {
+            maxPuffP += maxPuffs;
+        }
+
+        while (true) {
+            Vector3 puffPos = puffs[puffP % maxPuffs].transform.position;
+            float dist = Vector3.Distance(pos, puffPos);
+            int delta = 1;
+
+            if (dist <= maxDist) {
+                yield return new Puff(puffPos, IndexOfPuff(puffP % maxPuffs));
+            } else {
+                delta = Mathf.Max(1, Mathf.FloorToInt((dist - maxDist) / minPuffDist));
+            }
+
+            puffP += delta;
+
+            if (puffP > maxPuffP) {
+                yield break;
             }
         }
     }
