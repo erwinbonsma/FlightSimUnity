@@ -5,14 +5,14 @@ using UnityEngine;
 public class OverheadCamera : MonoBehaviour {
 
     TrailManager trailManager;
-    Camera camera;
+    Camera targetCamera;
     Vector3 targetPosition;
 
     void Start() {
         trailManager = GameObject.FindGameObjectWithTag("TrailManager").GetComponent<TrailManager>();
         trailManager.onPuffAdded += OnPuffAdded;
 
-        camera = GetComponent<Camera>();
+        targetCamera = GetComponent<Camera>();
     }
 
     void OnPuffAdded(GameObject puff) {
@@ -21,8 +21,8 @@ public class OverheadCamera : MonoBehaviour {
 
         float w = Mathf.Max(1, max.x - min.x);
         float h = Mathf.Max(1, max.z - min.z);
-        float targetFrustumHeight = (h * camera.aspect > w) ? h : w / camera.aspect;
-        var distance = 1.1f * targetFrustumHeight * 0.5f / Mathf.Tan(camera.fieldOfView * 0.5f * Mathf.Deg2Rad);
+        float targetFrustumHeight = (h * targetCamera.aspect > w) ? h : w / targetCamera.aspect;
+        var distance = 1.1f * targetFrustumHeight * 0.5f / Mathf.Tan(targetCamera.fieldOfView * 0.5f * Mathf.Deg2Rad);
 
         targetPosition.Set((min.x + max.x) / 2, max.y + distance, (min.z + max.z) / 2);
     }
