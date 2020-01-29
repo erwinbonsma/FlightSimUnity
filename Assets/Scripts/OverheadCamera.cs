@@ -22,7 +22,7 @@ public class OverheadCamera : MonoBehaviour {
         float w = Mathf.Max(1, max.x - min.x);
         float h = Mathf.Max(1, max.z - min.z);
         float targetHeight = (h * targetCamera.aspect > w) ? h : w / targetCamera.aspect;
-        targetCamera.orthographicSize = targetHeight / 2;
+        targetCamera.orthographicSize = 1.05f * targetHeight / 2;
 
         targetPosition.Set((min.x + max.x) / 2, max.y + 1, (min.z + max.z) / 2);
     }
