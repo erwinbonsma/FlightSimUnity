@@ -442,6 +442,7 @@ MonoBehaviour:
   trailManagerObject: {fileID: 2127632760}
   linkPrefab: {fileID: 6583038258691908645, guid: 7ec9147170cc94cba8c28762f8ad0e77,
     type: 3}
+  overlappingLinkPrefab: {fileID: 0}
 --- !u!4 &455254435
 Transform:
   m_ObjectHideFlags: 0
@@ -1309,7 +1310,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 741396390b37f4d0587e54b887d1dc50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fuelConsumption: 0.1
+  fuelConsumption: 0.03
 --- !u!1 &1691193323
 GameObject:
   m_ObjectHideFlags: 0
@@ -1736,7 +1737,7 @@ MonoBehaviour:
   player: {fileID: 581690884}
   puffPrefab: {fileID: 4050380534131806856, guid: 98168f733dd3c4b488d64ceea2de05a5,
     type: 3}
-  maxPuffs: 200
+  maxPuffs: 1000
   spawnPeriod: 0.2
 --- !u!4 &2127632762
 Transform:

@@ -1,24 +1,53 @@
-﻿using System.Collections;
+﻿using System;
+using System.Text;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 enum CrossingType {
-    LeftUnder,
-    LeftOver,
-    RightUnder,
-    RightOver
+    LeftUnder = 0,
+    LeftOver = 1,
+    RightUnder = 2,
+    RightOver = 3,
+    Unknown = 4
 }
 
 class TrailCrossing {
+    public int CrossingNumber1 { get; private set; }
+    public int CrossingNumber2 { get; set; }
+
+    public CrossingType Type { get; set; }
+
+    public TrailCrossing(int crossingNumber) {
+        CrossingNumber1 = crossingNumber;
+        CrossingNumber2 = -1;
+        Type = CrossingType.Unknown;
+    }
+
+    public override String ToString() {
+        var sb = new StringBuilder();
+
+        sb.Append(CrossingNumber1.ToString());
+        sb.Append(",");
+        sb.Append(CrossingNumber2.ToString());
+        sb.Append("lLrR?"[(int)Type]);
+
+        return sb.ToString();
+    }
+}
+
+class SegmentCrossing {
+    // The indices to the first (puff) index of a line segment. For trail
     public int Index1 { get; private set; }
     public int Index2 { get; private set; }
-    public CrossingType Type { get; private set; }
 
-    public TrailCrossing(int index1, int index2, CrossingType type) {
+    public TrailCrossing TrailCrossing { get; private set; }
+
+    public SegmentCrossing(int index1, int index2, TrailCrossing trailCrossing) {
         Index1 = index1;
         Index2 = index2;
-        Type = type;
+        TrailCrossing = trailCrossing;
     }
 }
 
@@ -32,8 +61,10 @@ public class MissionReport : MonoBehaviour {
     GameObject player;
     GameObject gameControl;
 
-    Dictionary<int, TrailCrossing> crossings = new Dictionary<int, TrailCrossing>();
-    HashSet<int> overlap = new HashSet<int>();
+    Dictionary<int, SegmentCrossing> segmentCrossings = new Dictionary<int, SegmentCrossing>();
+    int crossingCount = 0;
+    List<TrailCrossing> trailCrossings = new List<TrailCrossing>();
+    HashSet<int> overlaps = new HashSet<int>();
 
     void Start() {
         player = GameObject.FindGameObjectWithTag("Player");
@@ -51,6 +82,7 @@ public class MissionReport : MonoBehaviour {
         cameraControl.EnableOverheadCamera();
 
         IdentifyCrossings(trailManager);
+        DumpCrossings();
 
         StartCoroutine(DrawTrail(trailManager));
 
@@ -73,8 +105,8 @@ public class MissionReport : MonoBehaviour {
 
         foreach (Puff puff in trailManager) {
             if (prevPuff != null) {
-                if (!crossings.ContainsKey(prevPuff.Index)) {
-                    ConnectPuffs(prevPuff, puff, overlap.Contains(prevPuff.Index));
+                if (!segmentCrossings.ContainsKey(prevPuff.Index)) {
+                    ConnectPuffs(prevPuff, puff, overlaps.Contains(prevPuff.Index));
                 }
 
                 yield return new WaitForSeconds( 0.1f );
@@ -83,9 +115,34 @@ public class MissionReport : MonoBehaviour {
         }
     }
 
-    void RegisterCrossing(Puff p1, Puff p2, Puff q1, Puff q2, IntersectionResult result) {
-        Debug.Log("Crossing between " + p1.Index + " and " + q1.Index);
+    TrailCrossing TrailCrossingFor(Puff p1, Puff q1) {
+        TrailCrossing trailCrossing = null;
 
+        // Check if a trail crossing already exists for this segment crossing
+        if (segmentCrossings.ContainsKey(p1.Index - 1)) {
+            if (Math.Abs(segmentCrossings[p1.Index - 1].Index2 - q1.Index) <= 1) {
+                trailCrossing = segmentCrossings[p1.Index - 1].TrailCrossing;
+            }
+        }
+        if (segmentCrossings.ContainsKey(q1.Index - 1)) {
+            if (Math.Abs(segmentCrossings[q1.Index - 1].Index1 - p1.Index) <= 1) {
+                if (trailCrossing != null) {
+                    Debug.Assert(segmentCrossings[q1.Index - 1].TrailCrossing == trailCrossing);
+                } else {
+                    trailCrossing = segmentCrossings[q1.Index - 1].TrailCrossing;
+                }
+            }
+        }
+
+        if (trailCrossing == null) {
+            trailCrossing = new TrailCrossing(++crossingCount);
+            trailCrossings.Add(trailCrossing);
+        }
+
+        return trailCrossing;
+    }
+
+    CrossingType ClassifyCrossing(Puff p1, Puff p2, Puff q1, Puff q2, IntersectionResult result) {
         // TODO: Check which one is on top
         bool goesUnder = true;
 
@@ -96,16 +153,35 @@ public class MissionReport : MonoBehaviour {
             type = goesUnder ? CrossingType.LeftUnder : CrossingType.LeftOver;
         }
 
-        var crossing = new TrailCrossing(p1.Index, q1.Index, type);
+        return type;
+    }
 
-        crossings[p1.Index] = crossing;
-        crossings[q1.Index] = crossing;
+    void RegisterCrossing(Puff p1, Puff p2, Puff q1, Puff q2, IntersectionResult result) {
+        Debug.Log("Crossing between " + p1.Index + " and " + q1.Index);
+
+        var trailCrossing = TrailCrossingFor(p1, q1);
+
+        if (trailCrossing.Type == CrossingType.Unknown) {
+            trailCrossing.Type = ClassifyCrossing(p1, p2, q1, q2, result);
+        }
+
+        var crossing = new SegmentCrossing(p1.Index, q1.Index, trailCrossing);
+        if (!segmentCrossings.ContainsKey(p1.Index)) {
+            segmentCrossings[p1.Index] = crossing;
+        } else {
+            overlaps.Add(p1.Index);
+        }
+        if (!segmentCrossings.ContainsKey(q1.Index)) {
+            segmentCrossings[q1.Index] = crossing;
+        } else {
+            overlaps.Add(q1.Index);
+        }
     }
 
     void RegisterOverlap(int index1, int index2) {
         Debug.Log("Overlap between " + index1 + " and " + index2);
-        overlap.Add(index1);
-        overlap.Add(index2);
+        overlaps.Add(index1);
+        overlaps.Add(index2);
     }
 
     void IdentifyCrossings(TrailManager trailManager) {
@@ -115,6 +191,18 @@ public class MissionReport : MonoBehaviour {
         Vector2 pos_p0 = Vector2.zero; // To silence compiler warning
         foreach (Puff p1 in trailManager) {
             Vector2 pos_p1 = new Vector2(p1.Position.x, p1.Position.z);
+
+            // Check if this segment is part of an already identified crossing. If so, then
+            // update its crossing number. This can be done now that the number of crossings up
+            // till now is known. Note, we still should check for other crossings to signal
+            // possible (undesired) overlaps.
+            if (segmentCrossings.ContainsKey(p1.Index)) {
+                var trailCrossing = segmentCrossings[p1.Index].TrailCrossing;
+                if (trailCrossing.CrossingNumber2 < 0) {
+                    trailCrossing.CrossingNumber2 = ++crossingCount;
+                }
+            }
+
             if (p0 != null) {
                 Vector3 midP = (p1.Position + p0.Position) / 2;
 
@@ -144,5 +232,16 @@ public class MissionReport : MonoBehaviour {
             p0 = p1;
             pos_p0 = pos_p1;
         }
+    }
+
+    void DumpCrossings() {
+        var sb = new StringBuilder();
+        foreach (var crossing in trailCrossings) {
+            if (sb.Length > 0) {
+                sb.Append(" ");
+            }
+            sb.Append(crossing.ToString());
+        }
+        Debug.Log(sb);
     }
 }
