@@ -21,10 +21,10 @@ public class OverheadCamera : MonoBehaviour {
 
         float w = Mathf.Max(1, max.x - min.x);
         float h = Mathf.Max(1, max.z - min.z);
-        float targetFrustumHeight = (h * targetCamera.aspect > w) ? h : w / targetCamera.aspect;
-        var distance = 1.1f * targetFrustumHeight * 0.5f / Mathf.Tan(targetCamera.fieldOfView * 0.5f * Mathf.Deg2Rad);
+        float targetHeight = (h * targetCamera.aspect > w) ? h : w / targetCamera.aspect;
+        targetCamera.orthographicSize = targetHeight / 2;
 
-        targetPosition.Set((min.x + max.x) / 2, max.y + distance, (min.z + max.z) / 2);
+        targetPosition.Set((min.x + max.x) / 2, max.y + 1, (min.z + max.z) / 2);
     }
 
     void FixedUpdate() {
