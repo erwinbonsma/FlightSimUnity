@@ -5,24 +5,31 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-enum CrossingType {
-    LeftUnder = 0,
-    LeftOver = 1,
-    RightUnder = 2,
-    RightOver = 3,
-    Unknown = 4
+enum CrossingHeight {
+    Equal = 0, // Both crossings are of equal height
+    Under = 1, // First crossing goes under the next
+    Above = 2, // First crossing goes above the next
+    Unknown = 3
+}
+
+enum CrossingDirection {
+    Left = 0,
+    Right = 1,
+    Unknown = 2
 }
 
 class TrailCrossing {
     public int CrossingNumber1 { get; private set; }
     public int CrossingNumber2 { get; set; }
 
-    public CrossingType Type { get; set; }
+    public CrossingHeight Height { get; set; }
+    public CrossingDirection Direction { get; set; }
 
     public TrailCrossing(int crossingNumber) {
         CrossingNumber1 = crossingNumber;
         CrossingNumber2 = -1;
-        Type = CrossingType.Unknown;
+        Height = CrossingHeight.Unknown;
+        Direction = CrossingDirection.Unknown;
     }
 
     public override String ToString() {
@@ -31,7 +38,8 @@ class TrailCrossing {
         sb.Append(CrossingNumber1.ToString());
         sb.Append(",");
         sb.Append(CrossingNumber2.ToString());
-        sb.Append("lLrR?"[(int)Type]);
+        sb.Append("=UA?"[(int)Height]);
+        sb.Append("LR"[(int)Direction]);
 
         return sb.ToString();
     }
@@ -49,6 +57,24 @@ class SegmentCrossing {
         Index2 = index2;
         TrailCrossing = trailCrossing;
     }
+
+    public bool IsUnder(int index) {
+        if (index == Index1) {
+            return TrailCrossing.Height == CrossingHeight.Under;
+        }
+        Debug.Assert(index == Index2);
+        return TrailCrossing.Height == CrossingHeight.Above;
+    }
+
+    public override String ToString() {
+        var sb = new StringBuilder();
+
+        sb.Append(Index1.ToString());
+        sb.Append("-");
+        sb.Append(Index2.ToString());
+
+        return sb.ToString();
+    }
 }
 
 public class MissionReport : MonoBehaviour {
@@ -57,6 +83,8 @@ public class MissionReport : MonoBehaviour {
     public GameObject trailManagerObject;
     public GameObject linkPrefab;
     public GameObject overlappingLinkPrefab;
+
+    public float minHeightDelta = 0.5f;
 
     GameObject player;
     GameObject gameControl;
@@ -105,7 +133,14 @@ public class MissionReport : MonoBehaviour {
 
         foreach (Puff puff in trailManager) {
             if (prevPuff != null) {
-                if (!segmentCrossings.ContainsKey(prevPuff.Index)) {
+                bool drawSegment = true;
+                if (segmentCrossings.ContainsKey(prevPuff.Index)) {
+                    if (segmentCrossings[prevPuff.Index].IsUnder(prevPuff.Index)) {
+                        drawSegment = false;
+                    }
+                }
+
+                if (drawSegment) {
                     ConnectPuffs(prevPuff, puff, overlaps.Contains(prevPuff.Index));
                 }
 
@@ -142,18 +177,37 @@ public class MissionReport : MonoBehaviour {
         return trailCrossing;
     }
 
-    CrossingType ClassifyCrossing(Puff p1, Puff p2, Puff q1, Puff q2, IntersectionResult result) {
-        // TODO: Check which one is on top
-        bool goesUnder = true;
+    CrossingHeight ClassifyCrossingHeight(Vector3 p1, Vector3 p2, Vector3 q1, Vector3 q2) {
+        Vector2 p1_2d = new Vector2(p1.x, p1.z), p2_2d = new Vector2(p2.x, p2.z);
+        Vector2 q1_2d = new Vector2(q1.x, q1.z), q2_2d = new Vector2(q2.x, q2.z);
 
-        CrossingType type;
-        if (result == IntersectionResult.IntersectingFromRight) {
-            type = goesUnder ? CrossingType.RightUnder : CrossingType.RightOver;
-        } else {
-            type = goesUnder ? CrossingType.LeftUnder : CrossingType.LeftOver;
+        Vector2 intersection_2d = MathUtil.IntersectionPoint(p1_2d, p2_2d, q1_2d, q2_2d);
+
+        Vector3 intersection_p = Vector3.LerpUnclamped(
+            p1, p2, MathUtil.RelativeDistance(p1_2d, p2_2d, intersection_2d)
+        );
+        Vector3 intersection_q = Vector3.LerpUnclamped(
+            q1, q2, MathUtil.RelativeDistance(q1_2d, q2_2d, intersection_2d)
+        );
+
+        if (Mathf.Abs(intersection_p.y - intersection_q.y) < minHeightDelta) {
+            return CrossingHeight.Equal;
         }
+        if (intersection_p.y < intersection_q.y) {
+            return CrossingHeight.Under;
+        } else {
+            return CrossingHeight.Above;
+        }
+    }
 
-        return type;
+    void RegisterSegmentCrossing(int segmentIndex, SegmentCrossing crossing) {
+        if (!segmentCrossings.ContainsKey(segmentIndex)) {
+            segmentCrossings[segmentIndex] = crossing;
+        } else {
+            if (segmentCrossings[segmentIndex].TrailCrossing != crossing.TrailCrossing) {
+                overlaps.Add(segmentIndex);
+            }
+        }
     }
 
     void RegisterCrossing(Puff p1, Puff p2, Puff q1, Puff q2, IntersectionResult result) {
@@ -161,21 +215,20 @@ public class MissionReport : MonoBehaviour {
 
         var trailCrossing = TrailCrossingFor(p1, q1);
 
-        if (trailCrossing.Type == CrossingType.Unknown) {
-            trailCrossing.Type = ClassifyCrossing(p1, p2, q1, q2, result);
+        if (trailCrossing.Height == CrossingHeight.Unknown) {
+            trailCrossing.Height = ClassifyCrossingHeight(
+                p1.Position, p2.Position, q1.Position, q2.Position
+            );
+        }
+        if (trailCrossing.Direction == CrossingDirection.Unknown) {
+            trailCrossing.Direction = (result == IntersectionResult.IntersectingFromRight)
+                ? CrossingDirection.Right
+                : CrossingDirection.Left;
         }
 
         var crossing = new SegmentCrossing(p1.Index, q1.Index, trailCrossing);
-        if (!segmentCrossings.ContainsKey(p1.Index)) {
-            segmentCrossings[p1.Index] = crossing;
-        } else {
-            overlaps.Add(p1.Index);
-        }
-        if (!segmentCrossings.ContainsKey(q1.Index)) {
-            segmentCrossings[q1.Index] = crossing;
-        } else {
-            overlaps.Add(q1.Index);
-        }
+        RegisterSegmentCrossing(p1.Index, crossing);
+        RegisterSegmentCrossing(q1.Index, crossing);
     }
 
     void RegisterOverlap(int index1, int index2) {
@@ -204,7 +257,7 @@ public class MissionReport : MonoBehaviour {
             }
 
             if (p0 != null) {
-                Vector3 midP = (p1.Position + p0.Position) / 2;
+                Vector2 midP = (pos_p0 + pos_p1) / 2;
 
                 Puff q0 = null;
                 Vector2 pos_q0 = Vector2.zero; // To silence compiler warning

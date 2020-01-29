@@ -131,7 +131,7 @@ public class TrailManager : MonoBehaviour {
         }
     }
 
-    public IEnumerator<Puff> GetNearbyPuffs(Vector3 pos, float maxDist, int fromIndex) {
+    public IEnumerator<Puff> GetNearbyPuffs(Vector2 pos, float maxDist, int fromIndex) {
         if (fromIndex >= NumPuffs) {
             yield break;
         }
@@ -148,7 +148,7 @@ public class TrailManager : MonoBehaviour {
 
         while (true) {
             Vector3 puffPos = puffs[puffP % maxPuffs].transform.position;
-            float dist = Vector3.Distance(pos, puffPos);
+            float dist = Vector2.Distance(pos, new Vector2(puffPos.x, puffPos.z));
             int delta = 1;
 
             if (dist <= maxDist) {

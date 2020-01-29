@@ -442,7 +442,9 @@ MonoBehaviour:
   trailManagerObject: {fileID: 2127632760}
   linkPrefab: {fileID: 6583038258691908645, guid: 7ec9147170cc94cba8c28762f8ad0e77,
     type: 3}
-  overlappingLinkPrefab: {fileID: 0}
+  overlappingLinkPrefab: {fileID: 1899223935365823297, guid: 1aa0b75270b4d4e669acbbe90e53f634,
+    type: 3}
+  minHeightDelta: 0.5
 --- !u!4 &455254435
 Transform:
   m_ObjectHideFlags: 0
