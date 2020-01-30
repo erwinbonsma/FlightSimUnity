@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 enum CrossingHeight {
     Level = 0, // Both crossings are of equal height
@@ -32,12 +33,16 @@ class TrailCrossing {
         Direction = CrossingDirection.Unknown;
     }
 
-    public override String ToString() {
+    public String ToString(int maxCrossingNumber) {
+        if (CrossingNumber1 > maxCrossingNumber) {
+            return "";
+        }
+
         var sb = new StringBuilder();
 
         sb.Append(CrossingNumber1.ToString());
         sb.Append(",");
-        if (CrossingNumber2 >= 0) {
+        if (CrossingNumber2 >= 0 && CrossingNumber2 <= maxCrossingNumber) {
             sb.Append(CrossingNumber2.ToString());
         } else {
             sb.Append("?");
@@ -49,10 +54,14 @@ class TrailCrossing {
 
         return sb.ToString();
     }
+
+    public override String ToString() {
+        return ToString(int.MaxValue);
+    }
 }
 
 class SegmentCrossing {
-    // The indices to the first (puff) index of a line segment. For trail
+    // The indices to the first (puff) Index of a line segment. For trail
     public int Index1 { get; private set; }
     public int Index2 { get; private set; }
 
@@ -72,6 +81,10 @@ class SegmentCrossing {
         return TrailCrossing.Height == CrossingHeight.Overhead;
     }
 
+    public bool IsFirst(int index) {
+        return index == Index1;
+    }
+
     public override String ToString() {
         var sb = new StringBuilder();
 
@@ -87,6 +100,8 @@ public class MissionReport : MonoBehaviour {
 
     public GameObject fuelMeter;
     public GameObject trailManagerObject;
+    public GameObject hud;
+
     public GameObject linkPrefab;
     public GameObject overlappingLinkPrefab;
 
@@ -94,6 +109,8 @@ public class MissionReport : MonoBehaviour {
 
     GameObject player;
     GameObject gameControl;
+
+    TextMeshProUGUI actualText;
 
     Dictionary<int, SegmentCrossing> segmentCrossings = new Dictionary<int, SegmentCrossing>();
     int crossingCount = 0;
@@ -115,8 +132,20 @@ public class MissionReport : MonoBehaviour {
         CameraControl cameraControl = gameControl.GetComponent<CameraControl>();
         cameraControl.EnableOverheadCamera();
 
+        var challenge = GameState.ActiveChallenge;
+        if (challenge != null) {
+            hud.SetActive(true);
+            var panelTransform = hud.transform.Find("Panel");
+            var targetTransform = panelTransform.transform.Find("Target");
+            var targetText = targetTransform.gameObject.GetComponent<TextMeshProUGUI>();
+            targetText.text = challenge.Goal;
+
+            var actualTransform = panelTransform.transform.Find("Actual");
+            actualText = actualTransform.gameObject.GetComponent<TextMeshProUGUI>();
+            actualText.text = "";
+        }
+
         IdentifyCrossings(trailManager);
-        DumpCrossings();
 
         StartCoroutine(DrawTrail(trailManager));
 
@@ -141,9 +170,16 @@ public class MissionReport : MonoBehaviour {
             if (prevPuff != null) {
                 bool drawSegment = true;
                 if (segmentCrossings.ContainsKey(prevPuff.Index)) {
-                    if (segmentCrossings[prevPuff.Index].IsUnder(prevPuff.Index)) {
+                    var segmentCrossing = segmentCrossings[prevPuff.Index];
+
+                    if (segmentCrossing.IsUnder(prevPuff.Index)) {
                         drawSegment = false;
                     }
+
+                    int maxCrossingNumber = segmentCrossing.IsFirst(prevPuff.Index)
+                        ? segmentCrossing.TrailCrossing.CrossingNumber1
+                        : segmentCrossing.TrailCrossing.CrossingNumber2;
+                    actualText.text = ActualCrossingString(maxCrossingNumber);
                 }
 
                 if (drawSegment) {
@@ -293,14 +329,16 @@ public class MissionReport : MonoBehaviour {
         }
     }
 
-    void DumpCrossings() {
+    string ActualCrossingString(int maxCrossingNumber) {
         var sb = new StringBuilder();
+
         foreach (var crossing in trailCrossings) {
             if (sb.Length > 0) {
                 sb.Append(" ");
             }
-            sb.Append(crossing.ToString());
+            sb.Append(crossing.ToString(maxCrossingNumber));
         }
-        Debug.Log(sb);
+
+        return sb.ToString();
     }
 }
