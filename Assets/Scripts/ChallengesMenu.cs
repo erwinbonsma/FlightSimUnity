@@ -26,6 +26,13 @@ public class ChallengesMenu : MonoBehaviour {
         }
     }
 
+    void Update() {
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            StartCoroutine(UnityUtil.AsyncLoadScene("MainMenu"));
+            enabled = false;
+        }
+    }
+
     Challenge ChallengeForButton(Button button) {
         var textTransform = button.transform.Find("Title");
         var text = textTransform.gameObject.GetComponent<TextMeshProUGUI>();
@@ -41,5 +48,6 @@ public class ChallengesMenu : MonoBehaviour {
     void OnButtonClick(int challengeIndex) {
         GameState.ActiveChallenge = GameState.Challenges[challengeIndex];
         StartCoroutine(UnityUtil.AsyncLoadScene("StartChallengeScreen"));
+        enabled = false;
     }
 }
