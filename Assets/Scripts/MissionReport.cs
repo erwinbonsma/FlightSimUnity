@@ -75,10 +75,10 @@ class SegmentCrossing {
 
     public bool IsUnder(int index) {
         if (index == Index1) {
-            return TrailCrossing.Height == CrossingHeight.Underneath;
+            return TrailCrossing.Height == CrossingHeight.Overhead;
         }
         Debug.Assert(index == Index2);
-        return TrailCrossing.Height == CrossingHeight.Overhead;
+        return TrailCrossing.Height == CrossingHeight.Underneath;
     }
 
     public bool IsFirst(int index) {
@@ -203,16 +203,12 @@ public class MissionReport : MonoBehaviour {
         bool pass = true;
 
         if (!GameState.ActiveChallenge.Goal.Equals(ActualCrossingString())) {
-            Debug.Log("Goal mismatch");
             pass = false;
         }
 
         if (overlaps.Count > 0) {
-            Debug.Log("One or more overlaps");
             pass = false;
         }
-
-        Debug.Log("Pass = " + pass);
 
         actualText.color = pass ? Color.green : Color.red;
 
@@ -281,7 +277,7 @@ public class MissionReport : MonoBehaviour {
         if (Mathf.Abs(intersection_p.y - intersection_q.y) < minHeightDelta) {
             return CrossingHeight.Level;
         }
-        if (intersection_p.y < intersection_q.y) {
+        if (intersection_p.y > intersection_q.y) {
             return CrossingHeight.Underneath;
         } else {
             return CrossingHeight.Overhead;
