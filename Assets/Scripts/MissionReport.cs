@@ -101,6 +101,7 @@ public class MissionReport : MonoBehaviour {
     public GameObject fuelMeter;
     public GameObject trailManagerObject;
     public GameObject hud;
+    public GameObject resultHud;
 
     public GameObject linkPrefab;
     public GameObject overlappingLinkPrefab;
@@ -147,9 +148,7 @@ public class MissionReport : MonoBehaviour {
 
         IdentifyCrossings(trailManager);
 
-        StartCoroutine(DrawTrail(trailManager));
-
-        //SceneManager.LoadSceneAsync("MainMenu");
+        StartCoroutine(ReportResult(trailManager));
     }
 
     void ConnectPuffs(Puff p1, Puff p2, bool overlaps) {
@@ -176,20 +175,67 @@ public class MissionReport : MonoBehaviour {
                         drawSegment = false;
                     }
 
-                    int maxCrossingNumber = segmentCrossing.IsFirst(prevPuff.Index)
-                        ? segmentCrossing.TrailCrossing.CrossingNumber1
-                        : segmentCrossing.TrailCrossing.CrossingNumber2;
-                    actualText.text = ActualCrossingString(maxCrossingNumber);
+                    if (actualText != null) {
+                        int maxCrossingNumber = segmentCrossing.IsFirst(prevPuff.Index)
+                            ? segmentCrossing.TrailCrossing.CrossingNumber1
+                            : segmentCrossing.TrailCrossing.CrossingNumber2;
+                        actualText.text = ActualCrossingString(maxCrossingNumber);
+                    }
                 }
+
+                bool overlapping = overlaps.Contains(prevPuff.Index);
 
                 if (drawSegment) {
-                    ConnectPuffs(prevPuff, puff, overlaps.Contains(prevPuff.Index));
+                    ConnectPuffs(prevPuff, puff, overlapping);
                 }
 
-                yield return new WaitForSeconds( 0.1f );
+                if (overlapping && actualText != null) {
+                    actualText.color = Color.red;
+                }
+
+                yield return new WaitForSeconds(0.05f);
             }
             prevPuff = puff;
         }
+    }
+
+    void ReportChallengeResult() {
+        bool pass = true;
+
+        if (!GameState.ActiveChallenge.Goal.Equals(ActualCrossingString())) {
+            Debug.Log("Goal mismatch");
+            pass = false;
+        }
+
+        if (overlaps.Count > 0) {
+            Debug.Log("One or more overlaps");
+            pass = false;
+        }
+
+        Debug.Log("Pass = " + pass);
+
+        actualText.color = pass ? Color.green : Color.red;
+
+        resultHud.SetActive(true);
+        var textTransform = resultHud.transform.Find("Text");
+        var text = textTransform.gameObject.GetComponent<TextMeshProUGUI>();
+        text.text = pass ? "GOOD KNOT" : "NOT GOOD";
+        text.color = pass ? Color.green : Color.red;
+    }
+
+    IEnumerator ShowResult() {
+        if (GameState.ActiveChallenge != null) {
+            ReportChallengeResult();
+        }
+
+        yield return new WaitForSeconds(5.0f);
+
+        SceneManager.LoadSceneAsync("MainMenu");
+    }
+
+    IEnumerator ReportResult(TrailManager trailManager) {
+        yield return StartCoroutine(DrawTrail(trailManager));
+        yield return StartCoroutine(ShowResult());
     }
 
     TrailCrossing TrailCrossingFor(Puff p1, Puff q1) {
@@ -340,5 +386,9 @@ public class MissionReport : MonoBehaviour {
         }
 
         return sb.ToString();
+    }
+
+    string ActualCrossingString() {
+        return ActualCrossingString(int.MaxValue);
     }
 }

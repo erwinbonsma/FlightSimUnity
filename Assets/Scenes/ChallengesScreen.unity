@@ -3153,7 +3153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4662b962bb9f418a81e7eac366356a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goal: 1,4R 2,5L 3,6L
+  goal: 1,4R 2,5L 3,6R
   maxDuration: 30
 --- !u!114 &1709029394
 MonoBehaviour:
