@@ -25,5 +25,8 @@ public class ChallengesMenu : MonoBehaviour {
 
         var challenge = new Challenge(text.text, image.sprite, goal.goal);
         Debug.Log("Starting challenge " + challenge);
+
+        GameState.ActiveChallenge = challenge;
+        StartCoroutine(UnityUtil.AsyncLoadScene("StartChallengeScreen"));
     }
 }

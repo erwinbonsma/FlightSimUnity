@@ -14,4 +14,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/HelpScreen.unity
     guid: 36f6fad9523a348749f7f32acc78b9ba
+  - enabled: 1
+    path: Assets/Scenes/ChallengesScreen.unity
+    guid: 18745d076d0d64796977b6ec0c585b2f
+  - enabled: 1
+    path: Assets/Scenes/StartChallengeScreen.unity
+    guid: de25df49d1b604da3989fbe78119dce2
   m_configObjects: {}

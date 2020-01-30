@@ -816,7 +816,7 @@ GameObject:
   - component: {fileID: 635631077}
   - component: {fileID: 635631076}
   m_Layer: 5
-  m_Name: TrialsButton
+  m_Name: ChallengesButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -881,7 +881,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 635631077}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 143830608}
+        m_MethodName: StartChallenge
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &635631077
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1415,7 +1426,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 143830608}
-        m_MethodName: StartGame
+        m_MethodName: StartPractice
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
