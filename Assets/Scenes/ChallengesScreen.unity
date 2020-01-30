@@ -3154,7 +3154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   goal: 1,4R 2,5L 3,6R
-  maxDuration: 30
+  maxDuration: 20
 --- !u!114 &1709029394
 MonoBehaviour:
   m_ObjectHideFlags: 0

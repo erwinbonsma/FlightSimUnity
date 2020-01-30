@@ -435,12 +435,12 @@ RectTransform:
   - {fileID: 53296543}
   - {fileID: 1062450553}
   - {fileID: 232927063}
-  m_Father: {fileID: 888348785}
-  m_RootOrder: 1
+  m_Father: {fileID: 1530232604}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 574, y: 209}
+  m_AnchoredPosition: {x: -30, y: -243}
   m_SizeDelta: {x: 480, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &91789585
@@ -788,7 +788,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 888348785}
-  m_RootOrder: 5
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1575,9 +1575,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 687800456}
-  - {fileID: 91789584}
-  - {fileID: 1144342003}
-  - {fileID: 2099330793}
+  - {fileID: 1530232604}
   - {fileID: 1486405451}
   - {fileID: 348292433}
   m_Father: {fileID: 0}
@@ -1964,12 +1962,12 @@ RectTransform:
   - {fileID: 288658551}
   - {fileID: 528256889}
   - {fileID: 994195845}
-  m_Father: {fileID: 888348785}
-  m_RootOrder: 2
+  m_Father: {fileID: 1530232604}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 574, y: 161}
+  m_AnchoredPosition: {x: -30, y: -291}
   m_SizeDelta: {x: 480, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1144342004
@@ -2527,12 +2525,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 888348785}
-  m_RootOrder: 4
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 63}
-  m_SizeDelta: {x: 640, y: 140}
+  m_SizeDelta: {x: 500, y: 140}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1486405452
 MonoBehaviour:
@@ -2552,11 +2550,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '- Fly to reproduce the crossings
+  m_text: 'Fly to reproduce the crossings
 
-    - Avoid overlapping paths
+    Avoid overlapping paths
 
-    - Finish before you run out of fuel'
+'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2625,12 +2623,12 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 1486405452}
-    characterCount: 94
+    characterCount: 55
     spriteCount: 0
-    spaceCount: 17
-    wordCount: 18
+    spaceCount: 8
+    wordCount: 8
     linkCount: 0
-    lineCount: 3
+    lineCount: 2
     pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
@@ -2811,6 +2809,39 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1522737732}
   m_CullTransparentMesh: 0
+--- !u!1 &1530232603
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1530232604}
+  m_Layer: 0
+  m_Name: Keys
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1530232604
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1530232603}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 30, y: 240, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 91789584}
+  - {fileID: 1144342003}
+  - {fileID: 2099330793}
+  m_Father: {fileID: 888348785}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1678343523
 GameObject:
   m_ObjectHideFlags: 0
@@ -3369,12 +3400,12 @@ RectTransform:
   - {fileID: 1197126243}
   - {fileID: 618726354}
   - {fileID: 971580440}
-  m_Father: {fileID: 888348785}
-  m_RootOrder: 3
+  m_Father: {fileID: 1530232604}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 574, y: 111}
+  m_AnchoredPosition: {x: -30, y: -341}
   m_SizeDelta: {x: 480, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2099330794
