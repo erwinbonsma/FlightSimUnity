@@ -21,9 +21,9 @@ public class ChallengesMenu : MonoBehaviour {
         var imageTransform = button.transform.Find("Image");
         var image = imageTransform.gameObject.GetComponent<Image>();
 
-        var goal = button.GetComponent<ChallengeGoal>();
+        var spec = button.GetComponent<ChallengeSpec>();
 
-        var challenge = new Challenge(text.text, image.sprite, goal.goal);
+        var challenge = new Challenge(text.text, image.sprite, spec.goal, spec.maxDuration);
         Debug.Log("Starting challenge " + challenge);
 
         GameState.ActiveChallenge = challenge;

@@ -12,7 +12,12 @@ public class FuelMeter : MonoBehaviour {
     float fuelLevel;
 
     void Start() {
-        fuelLevel = 1f;
+        var challenge = GameState.ActiveChallenge;
+        if (challenge != null) {
+            fuelLevel = challenge.MaxDuration * fuelConsumption;
+        } else {
+            fuelLevel = 1f;
+        }
     }
 
     void FixedUpdate() {

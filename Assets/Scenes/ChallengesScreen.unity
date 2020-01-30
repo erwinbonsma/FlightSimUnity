@@ -620,6 +620,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   goal: 1,4UL 2,3AL
+  maxDuration: 30
 --- !u!114 &281570278
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -749,6 +750,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   goal: 1,4AR 2,5UL 3,6AL
+  maxDuration: 30
 --- !u!114 &308258760
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1863,6 +1865,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   goal: 1,2UL
+  maxDuration: 15
 --- !u!114 &892390742
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2044,6 +2047,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   goal: 1,6AR 2,5UL 3,8AL 4,7UR
+  maxDuration: 60
 --- !u!114 &1031189669
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2174,6 +2178,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   goal: 1,20UR 2,21UL 3,28UR 4,29UL 5,30UR 6,27AL 7,22UR 8,19AL 9,18UR 10,23UL 11,26UR
     12,31UL 13,32UR 14,25AL 15,24UR 16,17UL
+  maxDuration: 90
 --- !u!114 &1052547909
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2878,6 +2883,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   goal: 1,4=L 2,3=L
+  maxDuration: 30
 --- !u!1 &1571004123
 GameObject:
   m_ObjectHideFlags: 0
@@ -3148,6 +3154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   goal: 1,4=R 2,5=L 3,6=L
+  maxDuration: 30
 --- !u!114 &1709029394
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3352,6 +3359,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   goal: 1,2=L
+  maxDuration: 15
 --- !u!1 &1848250755
 GameObject:
   m_ObjectHideFlags: 0
