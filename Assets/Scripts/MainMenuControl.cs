@@ -6,7 +6,7 @@ public class MainMenuControl : MonoBehaviour {
 
     public void StartPractice() {
         GameState.ActiveChallenge = null;
-        StartCoroutine(UnityUtil.AsyncLoadScene("SampleScene"));
+        StartCoroutine(UnityUtil.AsyncLoadScene("FlyingScene"));
     }
 
     public void StartChallenge() {

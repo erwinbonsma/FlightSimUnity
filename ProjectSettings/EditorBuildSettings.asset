@@ -9,9 +9,6 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: 1f95d2ea9c4a7499caadc6ffc85dff82
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: b93cb1e7562fe4f60a74141dc06a96e8
-  - enabled: 1
     path: Assets/Scenes/HelpScreen.unity
     guid: 36f6fad9523a348749f7f32acc78b9ba
   - enabled: 1
@@ -20,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/StartChallengeScreen.unity
     guid: de25df49d1b604da3989fbe78119dce2
+  - enabled: 1
+    path: Assets/Scenes/FlyingScene.unity
+    guid: b93cb1e7562fe4f60a74141dc06a96e8
   m_configObjects: {}

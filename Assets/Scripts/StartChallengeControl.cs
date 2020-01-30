@@ -17,7 +17,7 @@ public class StartChallengeControl : MonoBehaviour {
 
     void Update() {
         if (Input.anyKey) {
-            StartCoroutine(UnityUtil.AsyncLoadScene("SampleScene"));
+            StartCoroutine(UnityUtil.AsyncLoadScene("FlyingScene"));
         }
     }
 }
