@@ -7,7 +7,7 @@ public class Challenge {
     public string Goal { get; private set; }
     public int MaxDuration { get; private set; }
     public Sprite Sprite { get; private set; }
-    public bool Completed { get; private set; }
+    public bool IsCompleted { get; private set; }
 
     static int numChallenges = 0;
 
@@ -17,11 +17,11 @@ public class Challenge {
         Sprite = sprite;
         Goal = goal;
         MaxDuration = maxDuration;
-        Completed = false;
+        IsCompleted = false;
     }
 
     public void MarkCompleted() {
-        Completed = true;
+        IsCompleted = true;
     }
 
     public override string ToString() {

@@ -7,6 +7,7 @@ using TMPro;
 public class ChallengesMenu : MonoBehaviour {
 
     public Button[] buttons;
+    public GameObject tickmarkPrefab;
 
     void Start() {
         bool initChallenges = GameState.Challenges.Count == 0;
@@ -16,7 +17,12 @@ public class ChallengesMenu : MonoBehaviour {
             if (initChallenges) {
                 GameState.Challenges.Add(ChallengeForButton(button));
             }
-            button.onClick.AddListener(delegate { OnButtonClick(index++); });
+
+            if (GameState.Challenges[index].IsCompleted) {
+                Instantiate(tickmarkPrefab, button.transform);
+            }
+            var challengeIndex = index++;
+            button.onClick.AddListener(delegate { OnButtonClick(challengeIndex); });
         }
     }
 

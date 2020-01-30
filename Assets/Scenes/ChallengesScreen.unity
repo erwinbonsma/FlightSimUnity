@@ -1979,6 +1979,8 @@ MonoBehaviour:
   - {fileID: 308258760}
   - {fileID: 1031189669}
   - {fileID: 1052547909}
+  tickmarkPrefab: {fileID: 5681489663501477409, guid: fb0712fcb75b9413aade890bad770ea7,
+    type: 3}
 --- !u!4 &978589692
 Transform:
   m_ObjectHideFlags: 0
