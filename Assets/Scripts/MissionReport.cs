@@ -6,9 +6,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 enum CrossingHeight {
-    Equal = 0, // Both crossings are of equal height
-    Under = 1, // First crossing goes under the next
-    Above = 2, // First crossing goes above the next
+    Level = 0, // Both crossings are of equal height
+    Underneath = 1, // First crossing goes under the next
+    Overhead = 2, // First crossing goes above the next
     Unknown = 3
 }
 
@@ -37,9 +37,15 @@ class TrailCrossing {
 
         sb.Append(CrossingNumber1.ToString());
         sb.Append(",");
-        sb.Append(CrossingNumber2.ToString());
-        sb.Append("=UA?"[(int)Height]);
+        if (CrossingNumber2 >= 0) {
+            sb.Append(CrossingNumber2.ToString());
+        } else {
+            sb.Append("?");
+        }
         sb.Append("LR"[(int)Direction]);
+        if (Height != CrossingHeight.Level) {
+            sb.Append("=UO?"[(int)Height]);
+        }
 
         return sb.ToString();
     }
@@ -60,10 +66,10 @@ class SegmentCrossing {
 
     public bool IsUnder(int index) {
         if (index == Index1) {
-            return TrailCrossing.Height == CrossingHeight.Under;
+            return TrailCrossing.Height == CrossingHeight.Underneath;
         }
         Debug.Assert(index == Index2);
-        return TrailCrossing.Height == CrossingHeight.Above;
+        return TrailCrossing.Height == CrossingHeight.Overhead;
     }
 
     public override String ToString() {
@@ -191,12 +197,12 @@ public class MissionReport : MonoBehaviour {
         );
 
         if (Mathf.Abs(intersection_p.y - intersection_q.y) < minHeightDelta) {
-            return CrossingHeight.Equal;
+            return CrossingHeight.Level;
         }
         if (intersection_p.y < intersection_q.y) {
-            return CrossingHeight.Under;
+            return CrossingHeight.Underneath;
         } else {
-            return CrossingHeight.Above;
+            return CrossingHeight.Overhead;
         }
     }
 

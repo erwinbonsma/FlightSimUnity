@@ -619,7 +619,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4662b962bb9f418a81e7eac366356a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goal: 1,4UL 2,3AL
+  goal: 1,4LO 2,3LU
   maxDuration: 30
 --- !u!114 &281570278
 MonoBehaviour:
@@ -749,7 +749,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4662b962bb9f418a81e7eac366356a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goal: 1,4AR 2,5UL 3,6AL
+  goal: 1,4RU 2,5LO 3,6RU
   maxDuration: 30
 --- !u!114 &308258760
 MonoBehaviour:
@@ -1864,7 +1864,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4662b962bb9f418a81e7eac366356a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goal: 1,2UL
+  goal: 1,2LO
   maxDuration: 15
 --- !u!114 &892390742
 MonoBehaviour:
@@ -2046,7 +2046,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4662b962bb9f418a81e7eac366356a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goal: 1,6AR 2,5UL 3,8AL 4,7UR
+  goal: 1,6RU 2,5LO 3,8LU 4,7RO
   maxDuration: 60
 --- !u!114 &1031189669
 MonoBehaviour:
@@ -2176,8 +2176,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4662b962bb9f418a81e7eac366356a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goal: 1,20UR 2,21UL 3,28UR 4,29UL 5,30UR 6,27AL 7,22UR 8,19AL 9,18UR 10,23UL 11,26UR
-    12,31UL 13,32UR 14,25AL 15,24UR 16,17UL
+  goal: 1,20RO 2,21LO 3,28RO 4,29LO 5,30RO 6,27LU 7,22RO 8,19LU 9,18RO 10,23LO 11,26RO
+    12,31LO 13,32RO 14,25LU 15,24RO 16,17LU
   maxDuration: 90
 --- !u!114 &1052547909
 MonoBehaviour:
@@ -2882,7 +2882,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4662b962bb9f418a81e7eac366356a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goal: 1,4=L 2,3=L
+  goal: 1,4L 2,3L
   maxDuration: 30
 --- !u!1 &1571004123
 GameObject:
@@ -3153,7 +3153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4662b962bb9f418a81e7eac366356a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goal: 1,4=R 2,5=L 3,6=L
+  goal: 1,4R 2,5L 3,6L
   maxDuration: 30
 --- !u!114 &1709029394
 MonoBehaviour:
@@ -3358,7 +3358,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4662b962bb9f418a81e7eac366356a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goal: 1,2=L
+  goal: 1,2L
   maxDuration: 15
 --- !u!1 &1848250755
 GameObject:
