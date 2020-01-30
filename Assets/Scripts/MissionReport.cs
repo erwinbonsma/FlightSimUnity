@@ -201,8 +201,9 @@ public class MissionReport : MonoBehaviour {
 
     void ReportChallengeResult() {
         bool pass = true;
+        var challenge = GameState.ActiveChallenge;
 
-        if (!GameState.ActiveChallenge.Goal.Equals(ActualCrossingString())) {
+        if (!challenge.Goal.Equals(ActualCrossingString())) {
             pass = false;
         }
 
@@ -217,6 +218,11 @@ public class MissionReport : MonoBehaviour {
         var text = textTransform.gameObject.GetComponent<TextMeshProUGUI>();
         text.text = pass ? "GOOD KNOT" : "NOT GOOD";
         text.color = pass ? Color.green : Color.red;
+
+        if (pass) {
+            challenge.MarkCompleted();
+            GameState.NextChallenge();
+        }
     }
 
     IEnumerator ShowResult() {
@@ -226,7 +232,11 @@ public class MissionReport : MonoBehaviour {
 
         yield return new WaitForSeconds(5.0f);
 
-        SceneManager.LoadSceneAsync("MainMenu");
+        if (GameState.ActiveChallenge != null) {
+            SceneManager.LoadSceneAsync("StartChallengeScreen");
+        } else {
+            SceneManager.LoadSceneAsync("MainMenu");
+        }
     }
 
     IEnumerator ReportResult(TrailManager trailManager) {

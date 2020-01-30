@@ -9,12 +9,18 @@ public class ChallengesMenu : MonoBehaviour {
     public Button[] buttons;
 
     void Start() {
+        bool initChallenges = GameState.Challenges.Count == 0;
+
+        int index = 0;
         foreach (var button in buttons) {
-            button.onClick.AddListener(delegate { OnButtonClick(button); });
+            if (initChallenges) {
+                GameState.Challenges.Add(ChallengeForButton(button));
+            }
+            button.onClick.AddListener(delegate { OnButtonClick(index++); });
         }
     }
 
-    void OnButtonClick(Button button) {
+    Challenge ChallengeForButton(Button button) {
         var textTransform = button.transform.Find("Title");
         var text = textTransform.gameObject.GetComponent<TextMeshProUGUI>();
 
@@ -23,10 +29,11 @@ public class ChallengesMenu : MonoBehaviour {
 
         var spec = button.GetComponent<ChallengeSpec>();
 
-        var challenge = new Challenge(text.text, image.sprite, spec.goal, spec.maxDuration);
-        Debug.Log("Starting challenge " + challenge);
+        return new Challenge(text.text, image.sprite, spec.goal, spec.maxDuration);
+    }
 
-        GameState.ActiveChallenge = challenge;
+    void OnButtonClick(int challengeIndex) {
+        GameState.ActiveChallenge = GameState.Challenges[challengeIndex];
         StartCoroutine(UnityUtil.AsyncLoadScene("StartChallengeScreen"));
     }
 }

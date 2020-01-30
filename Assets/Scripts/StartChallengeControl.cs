@@ -16,8 +16,12 @@ public class StartChallengeControl : MonoBehaviour {
     }
 
     void Update() {
-        if (Input.anyKey) {
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            StartCoroutine(UnityUtil.AsyncLoadScene("MainMenu"));
+            enabled = false;
+        } else if (Input.anyKey) {
             StartCoroutine(UnityUtil.AsyncLoadScene("FlyingScene"));
+            enabled = false;
         }
     }
 }

@@ -2,16 +2,26 @@ using System.Text;
 using UnityEngine;
 
 public class Challenge {
+    public int Index { get; private set; }
     public string Name { get; private set; }
     public string Goal { get; private set; }
     public int MaxDuration { get; private set; }
     public Sprite Sprite { get; private set; }
+    public bool Completed { get; private set; }
+
+    static int numChallenges = 0;
 
     public Challenge(string name, Sprite sprite, string goal, int maxDuration) {
+        Index = numChallenges++;
         Name = name;
         Sprite = sprite;
         Goal = goal;
         MaxDuration = maxDuration;
+        Completed = false;
+    }
+
+    public void MarkCompleted() {
+        Completed = true;
     }
 
     public override string ToString() {
